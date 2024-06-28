@@ -1,0 +1,14 @@
+<!-- app/views/comments/_form.html.erb -->
+<%= form_with(model: [@commentable, comment], local: true) do |form| %>
+  <%= form.hidden_field :commentable_type, value: commentable.class.name %>
+  <%= form.hidden_field :commentable_id, value: commentable.id %>
+
+  <div class="field">
+    <%= form.label :content %>
+    <%= form.text_area :content %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit %>
+  </div>
+<% end %>

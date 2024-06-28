@@ -1,10 +1,27 @@
 <p style="color: green"><%= notice %></p>
+<div class="container py-2">
+  <h2>Comments count: <%= @post.comments.count %></h2>
 
-<%= render @post %>
+  <%= render @post %>
 
-<div>
-  <%= link_to "Edit this post", edit_post_path(@post) %> |
-  <%= link_to "Back to posts", posts_path %>
+  <h3>Comments:</h3>
+  <% if @post.comments.any? %>
+    <ul>
+      <%= render partial: 'comments/comments', collection: @post.comments, as: :comment %>
+    </ul>
+  <% else %>
+    <p>No comments yet.</p>
+  <% end %>
 
-  <%= button_to "Destroy this post", @post, method: :delete %>
+
+  <h3>Add a comment:</h3>
+  <%= render partial: 'comments/form', locals: { commentable: @post, comment: Comment.new } %>
+  
+
+  <br>
+  <div>
+    <%= link_to "Edit this post", edit_post_path(@post), class:'btn btn-primary' %> 
+    <%= link_to "Back to posts", posts_path, class:'btn btn-secondary' %> 
+    <%= button_to "Destroy this post", @post, method: :delete, data: { confirm: 'Are you sure?' }, class:'btn btn-danger' %>
+  </div>
 </div>

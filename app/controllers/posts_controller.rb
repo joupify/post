@@ -5,16 +5,25 @@ class PostsController < ApplicationController
   # GET /posts or /posts.json
   def index
     @posts = Post.all
+    @current_user = current_user
   end
 
   # GET /posts/1 or /posts/1.json
   def show
+    @post = Post.find(params[:id])
+    @comments = @post.comments
+    @commentable = @post
+
   end
+
+
 
   # GET /posts/new
   def new
-    @post = Post.new
-  end
+    @post = current_user.posts.build
+     @comments = @post.comments
+    @comment.user = current_user 
+   end
 
   # GET /posts/1/edit
   def edit
@@ -22,7 +31,7 @@ class PostsController < ApplicationController
 
   # POST /posts or /posts.json
   def create
-    @post = Post.new(post_params)
+    @post = current_user.posts.new(post_params)
 
     respond_to do |format|
       if @post.save

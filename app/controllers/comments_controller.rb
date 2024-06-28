@@ -1,34 +1,44 @@
 class CommentsController < ApplicationController
-  before_action :authenticate_user!
-  before_action :find_commentable
+  before_action :find_commentable, only: [:create]
 
-
-  def new
-  end
+  # def new
+  #   @comment = Comment
+  # end
 
   def create
     @comment = @commentable.comments.new(comment_params)
-    @comment.user = current_user 
+    @comment.user = current_user
 
     if @comment.save
-      redirect_back fallback_location: root_path, notice: "Comment created successfully"
+      redirect_back fallback_location: root_path, notice: 'Comment created successfully.'
     else
-      redirec_back fallback_location: root_path, alert: "Error creating comment"
+      redirect_back fallback_location: root_path, alert: 'Comment could not be created.'
     end
   end
 
+
   def destroy
+    @comment = Comment.find(params[:id])
+    if @comment.destroy
+      redirect_back fallback_location: root_path, notice: "Comment deleted successfully"
+    else
+      redirect_back fallback_location: root_path, notice: "Comment deleted successfully"
+    end
+
   end
 
   private
 
   def find_commentable
-      @commentable = Post.find(params[:commentable_id]) if params[:commentable_type] == "Post"
-      @commentable = Comment.find(params[:commentable_id]) if params[:commentable_type] == "Comment"
+    case params[:comment][:commentable_type]
+    when "Post"
+      @commentable = Post.find(params[:comment][:commentable_id])
+    when "Comment"
+      @commentable = Comment.find(params[:comment][:commentable_id])
+    end
   end
-
   
   def comment_params
-    params.require(:comment).permit(:body, :commentable_id, :commentable_type)
+    params.require(:comment).permit(:content, :commentable_type, :commentable_id)
   end
 end

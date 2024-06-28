@@ -1,0 +1,34 @@
+<% if comment.present? %>
+  <div class="comment">
+    <p class="mb-0"><strong><%= comment.user.email %>:</strong></p>
+    <div><%= comment.content %></div>
+    <small class="fst-italic">Posted by: <%= comment.user.email %></small>
+    <%= button_to 'Delete', [comment.commentable, comment], method: :delete %>
+
+    <!-- Render the form to reply to a comment -->
+    <%= link_to 'Reply', '#', class: 'reply-button', data: { comment_id: comment.id } %>
+
+    <div class="reply-form" id="reply-form-<%= comment.id %>" style="display:none;">
+      <%= render 'comments/form', commentable: comment, comment: Comment.new %>
+    </div>
+
+    <!-- Render subcomments recursively -->
+    <% if comment.comments.any? %>
+      <div class="nested-comments p-4">
+        <%= render partial: 'comments/comments', collection: comment.comments, as: :comment %>
+      </div>
+    <% end %>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      document.querySelectorAll(".reply-button").forEach(button => {
+        button.addEventListener("click", (e) => {
+          e.preventDefault();
+          const commentId = button.dataset.commentId;
+          document.getElementById(`reply-form-${commentId}`).style.display = "block";
+        });
+      });
+    });
+  </script>
+<% end %>
